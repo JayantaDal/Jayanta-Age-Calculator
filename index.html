@@ -20,21 +20,27 @@
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       text-align: center;
-      width: 300px;
+      width: 350px;
     }
     h1 {
       color: #333;
       margin-bottom: 20px;
     }
+    .today-date {
+      font-size: 1.5em;
+      margin: 20px 0;
+    }
     .date-input {
       margin: 10px 0;
     }
     .date-input select {
-      padding: 5px;
-      margin: 0 5px;
+      padding: 10px;
+      font-size: 1em;
+      margin: 5px;
     }
     .result {
       margin-top: 20px;
+      font-size: 1.2em;
     }
     .result div {
       margin: 10px 0;
@@ -47,6 +53,7 @@
       border-radius: 5px;
       background-color: #28a745;
       color: white;
+      font-size: 1em;
     }
     button:hover {
       background-color: #218838;
@@ -120,8 +127,10 @@
     // Function to display today's date
     function displayTodayDate() {
       const today = new Date();
-      const options = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric' };
-      document.getElementById('todayDate').textContent = today.toLocaleDateString('en-US', options);
+      const day = today.getDate();
+      const month = today.getMonth() + 1; // Months are zero-based
+      const year = today.getFullYear();
+      document.getElementById('todayDate').textContent = `${day} / ${month} / ${year}`;
     }
 
     // Function to calculate age
