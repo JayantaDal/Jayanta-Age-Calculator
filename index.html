@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Age Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .calculator-container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 300px;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .date-input {
+      margin: 10px 0;
+    }
+    .date-input label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .date-input input {
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .buttons {
+      margin: 20px 0;
+    }
+    .buttons button {
+      font-size: 1em;
+      padding: 10px 20px;
+      margin: 5px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      background-color: #28a745;
+      color: white;
+    }
+    .buttons button:hover {
+      background-color: #218838;
+    }
+    .result {
+      margin-top: 20px;
+    }
+    .result div {
+      margin: 10px 0;
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator-container">
+    <h1>Age Calculator</h1>
+    <div class="date-input">
+      <label for="today-date">Today's Date</label>
+      <input type="date" id="today-date" value="2025-02-13">
+    </div>
+    <div class="date-input">
+      <label for="dob">Date of Birth</label>
+      <input type="date" id="dob">
+    </div>
+    <div class="buttons">
+      <button onclick="calculateAge()">Calculate</button>
+      <button onclick="clearFields()">Clear</button>
+    </div>
+    <div class="result">
+      <div>Your Age</div>
+      <div>YEARS: <span id="years">00</span></div>
+      <div>MONTHS: <span id="months">00</span></div>
+      <div>DAYS: <span id="days">00</span></div>
+      <div>Next Birthday</div>
+      <div>MONTHS: <span id="next-months">00</span></div>
+      <div>DAYS: <span id="next-days">00</span></div>
+    </div>
+  </div>
+
+  <script>
+    function calculateAge() {
+      const todayDate = new Date(document.getElementById('today-date').value);
+      const dob = new Date(document.getElementById('dob').value);
+
+      if (isNaN(dob.getTime())) {
+        alert("Please enter a valid date of birth.");
+        return;
+      }
+
+      let ageInMilliseconds = todayDate - dob;
+      let ageDate = new Date(ageInMilliseconds);
+
+      const years = Math.abs(ageDate.getUTCFullYear() - 1970);
+      const months = ageDate.getUTCMonth();
+      const days = ageDate.getUTCDate() - 1;
+
+      document.getElementById('years').textContent = years;
+      document.getElementById('months').textContent = months;
+      document.getElementById('days').textContent = days;
+
+      // Calculate next birthday
+      const nextBirthday = new Date(todayDate.getFullYear(), dob.getMonth(), dob.getDate());
+      if (nextBirthday < todayDate) {
+        nextBirthday.setFullYear(todayDate.getFullYear() + 1);
+      }
+
+      const nextBirthdayDiff = nextBirthday - todayDate;
+      const nextBirthdayDate = new Date(nextBirthdayDiff);
+
+      const nextMonths = nextBirthdayDate.getUTCMonth();
+      const nextDays = nextBirthdayDate.getUTCDate() - 1;
+
+      document.getElementById('next-months').textContent = nextMonths;
+      document.getElementById('next-days').textContent = nextDays;
+    }
+
+    function clearFields() {
+      document.getElementById('dob').value = '';
+      document.getElementById('years').textContent = '00';
+      document.getElementById('months').textContent = '00';
+      document.getElementById('days').textContent = '00';
+      document.getElementById('next-months').textContent = '00';
+      document.getElementById('next-days').textContent = '00';
+    }
+  </script>
+</body>
+</html>
