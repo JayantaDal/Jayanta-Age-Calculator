@@ -29,114 +29,158 @@
     .date-input {
       margin: 10px 0;
     }
-    .date-input label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-    .date-input input {
-      width: 100%;
-      padding: 10px;
-      font-size: 1em;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    .buttons {
-      margin: 20px 0;
-    }
-    .buttons button {
-      font-size: 1em;
-      padding: 10px 20px;
-      margin: 5px;
-      cursor: pointer;
-      border: none;
-      border-radius: 5px;
-      background-color: #28a745;
-      color: white;
-    }
-    .buttons button:hover {
-      background-color: #218838;
+    .date-input select {
+      padding: 5px;
+      margin: 0 5px;
     }
     .result {
       margin-top: 20px;
     }
     .result div {
       margin: 10px 0;
-      font-size: 1.2em;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      background-color: #28a745;
+      color: white;
+    }
+    button:hover {
+      background-color: #218838;
     }
   </style>
 </head>
 <body>
   <div class="calculator-container">
-    <h1>Age Calculator</h1>
-    <div class="date-input">
-      <label for="today-date">Today's Date</label>
-      <input type="date" id="today-date" value="2025-02-13">
+    <h1>Jayanta Age Calculator</h1>
+    <div class="today-date">
+      <strong>Today's Date</strong>
+      <div id="todayDate"></div>
     </div>
-    <div class="date-input">
-      <label for="dob">Date of Birth</label>
-      <input type="date" id="dob">
+    <div class="date-of-birth">
+      <strong>Date of Birth</strong>
+      <div class="date-input">
+        <select id="day"></select>
+        <select id="month"></select>
+        <select id="year"></select>
+      </div>
     </div>
-    <div class="buttons">
-      <button onclick="calculateAge()">Calculate</button>
-      <button onclick="clearFields()">Clear</button>
+    <button onclick="calculateAge()">Calculate</button>
+    <button onclick="clearInputs()">Clear</button>
+    <div class="result">
+      <strong>Your Age</strong>
+      <div>YEARS <span id="years">00</span></div>
+      <div>MONTHS <span id="months">00</span></div>
+      <div>DAYS <span id="days">00</span></div>
     </div>
     <div class="result">
-      <div>Your Age</div>
-      <div>YEARS: <span id="years">00</span></div>
-      <div>MONTHS: <span id="months">00</span></div>
-      <div>DAYS: <span id="days">00</span></div>
-      <div>Next Birthday</div>
-      <div>MONTHS: <span id="next-months">00</span></div>
-      <div>DAYS: <span id="next-days">00</span></div>
+      <strong>Next Birthday</strong>
+      <div>MONTHS <span id="nextMonths">00</span></div>
+      <div>DAYS <span id="nextDays">00</span></div>
     </div>
   </div>
 
   <script>
-    function calculateAge() {
-      const todayDate = new Date(document.getElementById('today-date').value);
-      const dob = new Date(document.getElementById('dob').value);
+    // Function to populate dropdowns for day, month, and year
+    function populateDropdowns() {
+      const daySelect = document.getElementById('day');
+      const monthSelect = document.getElementById('month');
+      const yearSelect = document.getElementById('year');
 
-      if (isNaN(dob.getTime())) {
-        alert("Please enter a valid date of birth.");
-        return;
+      // Populate days (1-31)
+      for (let i = 1; i <= 31; i++) {
+        const option = document.createElement('option');
+        option.value = i;
+        option.text = i;
+        daySelect.appendChild(option);
       }
 
-      let ageInMilliseconds = todayDate - dob;
-      let ageDate = new Date(ageInMilliseconds);
-
-      const years = Math.abs(ageDate.getUTCFullYear() - 1970);
-      const months = ageDate.getUTCMonth();
-      const days = ageDate.getUTCDate() - 1;
-
-      document.getElementById('years').textContent = years;
-      document.getElementById('months').textContent = months;
-      document.getElementById('days').textContent = days;
-
-      // Calculate next birthday
-      const nextBirthday = new Date(todayDate.getFullYear(), dob.getMonth(), dob.getDate());
-      if (nextBirthday < todayDate) {
-        nextBirthday.setFullYear(todayDate.getFullYear() + 1);
+      // Populate months (1-12)
+      const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      for (let i = 0; i < months.length; i++) {
+        const option = document.createElement('option');
+        option.value = i + 1;
+        option.text = months[i];
+        monthSelect.appendChild(option);
       }
 
-      const nextBirthdayDiff = nextBirthday - todayDate;
-      const nextBirthdayDate = new Date(nextBirthdayDiff);
-
-      const nextMonths = nextBirthdayDate.getUTCMonth();
-      const nextDays = nextBirthdayDate.getUTCDate() - 1;
-
-      document.getElementById('next-months').textContent = nextMonths;
-      document.getElementById('next-days').textContent = nextDays;
+      // Populate years (1900-current year)
+      const currentYear = new Date().getFullYear();
+      for (let i = 1900; i <= currentYear; i++) {
+        const option = document.createElement('option');
+        option.value = i;
+        option.text = i;
+        yearSelect.appendChild(option);
+      }
     }
 
-    function clearFields() {
-      document.getElementById('dob').value = '';
+    // Function to display today's date
+    function displayTodayDate() {
+      const today = new Date();
+      const options = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric' };
+      document.getElementById('todayDate').textContent = today.toLocaleDateString('en-US', options);
+    }
+
+    // Function to calculate age
+    function calculateAge() {
+      const day = parseInt(document.getElementById('day').value);
+      const month = parseInt(document.getElementById('month').value);
+      const year = parseInt(document.getElementById('year').value);
+
+      const birthDate = new Date(year, month - 1, day);
+      const today = new Date();
+
+      let ageYears = today.getFullYear() - birthDate.getFullYear();
+      let ageMonths = today.getMonth() - birthDate.getMonth();
+      let ageDays = today.getDate() - birthDate.getDate();
+
+      if (ageDays < 0) {
+        ageMonths--;
+        ageDays += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+      }
+      if (ageMonths < 0) {
+        ageYears--;
+        ageMonths += 12;
+      }
+
+      // Calculate next birthday
+      const nextBirthday = new Date(today.getFullYear(), month - 1, day);
+      if (nextBirthday < today) {
+        nextBirthday.setFullYear(today.getFullYear() + 1);
+      }
+      const diffTime = nextBirthday - today;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      const nextMonths = Math.floor(diffDays / 30);
+      const nextDays = diffDays % 30;
+
+      // Display results
+      document.getElementById('years').textContent = ageYears;
+      document.getElementById('months').textContent = ageMonths;
+      document.getElementById('days').textContent = ageDays;
+      document.getElementById('nextMonths').textContent = nextMonths;
+      document.getElementById('nextDays').textContent = nextDays;
+    }
+
+    // Function to clear inputs
+    function clearInputs() {
+      document.getElementById('day').value = '';
+      document.getElementById('month').value = '';
+      document.getElementById('year').value = '';
       document.getElementById('years').textContent = '00';
       document.getElementById('months').textContent = '00';
       document.getElementById('days').textContent = '00';
-      document.getElementById('next-months').textContent = '00';
-      document.getElementById('next-days').textContent = '00';
+      document.getElementById('nextMonths').textContent = '00';
+      document.getElementById('nextDays').textContent = '00';
     }
+
+    // Initialize dropdowns and today's date
+    window.onload = function () {
+      populateDropdowns();
+      displayTodayDate();
+    };
   </script>
 </body>
 </html>
